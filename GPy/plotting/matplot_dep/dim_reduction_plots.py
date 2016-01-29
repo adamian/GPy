@@ -117,7 +117,13 @@ def plot_latent(model, labels=None, which_indices=None,
     def plot_function(x):
         Xtest_full = np.zeros((x.shape[0], X.shape[1]))
         Xtest_full[:, [input_1, input_2]] = x
-        _, var = model.predict(Xtest_full, **predict_kwargs)
+        tmp,_ = model.predict(Xtest_full[0,:][None,:], **predict_kwargs)
+        if tmp.shape[1]>1000:
+            var = np.zeros((Xtest_full.shape[0],1))
+            for i in range(Xtest_full.shape[0]):
+                _, var[i,:] = model.predict(Xtest_full[i,:][None,:], **predict_kwargs)
+        else:
+            _, var = model.predict(Xtest_full, **predict_kwargs)
         var = var[:, :1]
         return np.log(var)
 
